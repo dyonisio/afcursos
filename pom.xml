@@ -94,9 +94,7 @@
 				</executions>
 				<configuration>
 					<excludes>
-						<exclude>com/facens/cursosaf/application/dto/**</exclude>
-						<exclude>com/facens/cursosaf/domain/model/**</exclude>
-						<exclude>com/facens/cursosaf/domain/entities/**</exclude>
+						
 					</excludes>
 				</configuration>
 			</plugin>
