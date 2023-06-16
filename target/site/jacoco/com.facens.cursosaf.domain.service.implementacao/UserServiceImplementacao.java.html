@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserServiceImplementacao.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cursosaf</a> &gt; <a href="index.source.html" class="el_package">com.facens.cursosaf.domain.service.implementacao</a> &gt; <span class="el_source">UserServiceImplementacao.java</span></div><h1>UserServiceImplementacao.java</h1><pre class="source lang-java linenums">package com.facens.cursosaf.domain.service.implementacao;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.facens.cursosaf.application.dto.user.UserDTO;
+import com.facens.cursosaf.application.dto.user.UserInsertDTO;
+import com.facens.cursosaf.application.dto.user.UserUpdateDTO;
+import com.facens.cursosaf.application.exception.BadRequestException;
+import com.facens.cursosaf.domain.entities.User;
+import com.facens.cursosaf.domain.factories.UserFactory;
+import com.facens.cursosaf.domain.service.UserService;
+import com.facens.cursosaf.infra.repository.UserRepository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+
+@Service
+<span class="fc" id="L26">public class UserServiceImplementacao implements UserService {</span>
+
+	@PersistenceContext
+	private EntityManager entityManager;
+	
+	@Autowired
+    private UserRepository repository;
+
+	@Override
+	public List&lt;UserDTO&gt; getAll() {
+<span class="nc" id="L36">		List&lt;User&gt; users = repository.findAll();</span>
+<span class="nc" id="L37">        return users.stream().map(UserFactory::createClientDTO).collect(Collectors.toList());</span>
+	}
+
+	@Override
+	public UserDTO getById(Long id) {		
+<span class="nc" id="L42">		User user = repository.findById(id).orElseThrow(() -&gt; new BadRequestException(&quot;Não foi encontrado nenhum usuário!&quot;, BAD_REQUEST));</span>
+<span class="nc" id="L43">        return UserFactory.createClientDTO(user);</span>
+	}
+
+	@Override
+	public UserDTO getByCpf(String cpf) {
+<span class="nc" id="L48">		return UserFactory.createClientDTO(repository.findByCpf(cpf));</span>
+	}
+
+	@Override
+	public UserDTO insertUser(UserInsertDTO userInsertDTO) {        
+<span class="nc" id="L53">        User user = UserFactory.createUser(userInsertDTO);</span>
+        
+<span class="nc" id="L55">        user.setPremium(false);</span>
+<span class="nc" id="L56">        user.setCourses(0);</span>
+<span class="nc" id="L57">        user.setFinishedCourses(0);</span>
+<span class="nc" id="L58">        user.setCoins(0);</span>
+        
+<span class="nc" id="L60">        User savedUser = repository.save(user);</span>
+
+<span class="nc" id="L62">        return UserFactory.createClientDTO(savedUser);</span>
+	}
+
+	@Override
+	public UserDTO updateUserById(Long id, UserUpdateDTO userUpdateDTO) {
+<span class="nc" id="L67">		UserDTO hasUser  = getById(id);</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">		if(hasUser == null){</span>
+<span class="nc" id="L69">            throw new BadRequestException(&quot;Não há como atualizar o usuário inexistente!&quot;, BAD_REQUEST);</span>
+        }
+		
+<span class="nc" id="L72">        User user = UserFactory.createFromUpdateDTO(userUpdateDTO, hasUser);</span>
+<span class="nc" id="L73">        User savedUser = repository.save(user);</span>
+<span class="nc" id="L74">        return UserFactory.createClientDTO(savedUser);</span>
+	}
+
+	@Override
+	public void deleteUserById(Long id) {
+<span class="nc" id="L79">		UserDTO hasUser  = getById(id);</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">		if(hasUser == null){</span>
+<span class="nc" id="L81">            throw new BadRequestException(&quot;Não há como excluir o usuário inexistente!&quot;, BAD_REQUEST);</span>
+        }
+		
+<span class="nc" id="L84">        repository.deleteById(hasUser.getId());		</span>
+<span class="nc" id="L85">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
