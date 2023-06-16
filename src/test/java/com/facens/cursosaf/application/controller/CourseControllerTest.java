@@ -102,7 +102,7 @@ public class CourseControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
-    @DisplayName("Deve atualizar produto")
+    @DisplayName("Deve atualizar curso")
     @Test
     void atualizarCurso() throws Exception{
 
@@ -115,6 +115,14 @@ public class CourseControllerTest {
 
         assertNotNull(mockMvc.perform(MockMvcRequestBuilders.patch(URI + "/{id}", MocksCourse.COURSE_ID)
                 .content(requestBody)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)));
+    }
+    
+    @DisplayName("Deve deletar curso")
+    @Test
+    void deletarCurso() throws Exception{
+        assertNotNull(mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", MocksCourse.COURSE_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)));
     }
